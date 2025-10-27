@@ -1,9 +1,10 @@
 import { Card } from "@/types/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Lock, Sparkles } from "lucide-react";
+import { Lock, Sparkles, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface StoryModalProps {
   card: Card | null;
@@ -14,6 +15,7 @@ interface StoryModalProps {
 }
 
 const StoryModal = ({ card, isOpen, onClose, onLoginRequired, isAuthenticated }: StoryModalProps) => {
+  const navigate = useNavigate();
   const [showUnlockAnimation, setShowUnlockAnimation] = useState(false);
 
   if (!card) return null;
@@ -114,8 +116,13 @@ const StoryModal = ({ card, isOpen, onClose, onLoginRequired, isAuthenticated }:
                   <Button
                     size="lg"
                     className="w-full bg-primary hover:bg-primary/90 animate-pulse-glow"
+                    onClick={() => {
+                      onClose();
+                      navigate(`/purchase/${card.id}`);
+                    }}
                   >
-                    🛒 Buy This Card Now
+                    <ShoppingCart className="w-5 h-5 mr-2" />
+                    Buy This Card Now
                   </Button>
                 </div>
               </div>

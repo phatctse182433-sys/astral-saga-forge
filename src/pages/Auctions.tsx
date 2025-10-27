@@ -1,13 +1,30 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
+import BidModal from "@/components/BidModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Gavel, TrendingUp } from "lucide-react";
 import { cards } from "@/data/cards";
+import { useToast } from "@/hooks/use-toast";
 
 const Auctions = () => {
+  const { toast } = useToast();
   const [selectedFilter, setSelectedFilter] = useState("Active");
+  const [isBidModalOpen, setIsBidModalOpen] = useState(false);
+  const [selectedAuction, setSelectedAuction] = useState<any>(null);
+
+  const handlePlaceBid = (auction: any) => {
+    setSelectedAuction(auction);
+    setIsBidModalOpen(true);
+  };
+
+  const handleWatchAuction = (cardName: string) => {
+    toast({
+      title: "Watching Auction 👁️",
+      description: `You'll receive notifications for ${cardName}`,
+    });
+  };
 
   // Mock auction data
   const activeAuctions = cards.slice(0, 3).map((card, index) => ({
@@ -91,11 +108,18 @@ const Auctions = () => {
                 </div>
 
                 <div className="pt-4 border-t border-border space-y-2">
-                  <Button className="w-full bg-primary hover:bg-primary/90">
+                  <Button 
+                    className="w-full bg-primary hover:bg-primary/90"
+                    onClick={() => handlePlaceBid(auction)}
+                  >
                     <Gavel className="w-4 h-4 mr-2" />
                     Place Bid
                   </Button>
-                  <Button variant="outline" className="w-full">
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => handleWatchAuction(auction.name)}
+                  >
                     <TrendingUp className="w-4 h-4 mr-2" />
                     Watch Auction
                   </Button>
@@ -105,6 +129,17 @@ const Auctions = () => {
           ))}
         </div>
       </section>
+
+      {selectedAuction && (
+        <BidModal
+          isOpen={isBidModalOpen}
+          onClose={() => setIsBidModalOpen(false)}
+          cardName={selectedAuction.name}
+          cardImage={selectedAuction.image}
+          currentBid={selectedAuction.currentBid}
+          minIncrement={selectedAuction.minIncrement}
+        />
+      )}
     </div>
   );
 };
