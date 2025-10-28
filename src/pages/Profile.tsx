@@ -8,20 +8,33 @@ import { Badge } from "@/components/ui/badge";
 import { User, Package, History, Settings, FileDown } from "lucide-react";
 import { cards } from "@/data/cards";
 import { Order } from "@/types/order";
+import { useAuth } from "@/contexts/AuthContext";
+import { Card } from "@/types/card";
 
 const Profile = () => {
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get("tab") || "profile";
-  const [username, setUsername] = useState("MysticSeeker");
-  const [email, setEmail] = useState("user@example.com");
+  const { user, logout } = useAuth();
+  const [username, setUsername] = useState(user?.username || "MysticSeeker");
+  const [email, setEmail] = useState(user?.email || "user@example.com");
   const [orders, setOrders] = useState<Order[]>([]);
-
-  // Mock user inventory
-  const userCards = cards.slice(0, 4);
+  const [userCards, setUserCards] = useState<Card[]>([]);
 
   useEffect(() => {
     const savedOrders = JSON.parse(localStorage.getItem("orders") || "[]");
     setOrders(savedOrders);
+
+    // Get unique cards from all orders
+    const purchasedCards: Card[] = [];
+    savedOrders.forEach((order: Order) => {
+      order.items.forEach((item) => {
+        // Check if card already exists
+        if (!purchasedCards.find(c => c.id === item.card.id)) {
+          purchasedCards.push(item.card);
+        }
+      });
+    });
+    setUserCards(purchasedCards);
   }, []);
 
   return (
@@ -81,19 +94,33 @@ const Profile = () => {
             <TabsContent value="inventory" className="space-y-8">
               <div className="card-glass p-8">
                 <h2 className="text-3xl font-serif font-bold mb-6">My Card Collection</h2>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {userCards.map((card) => (
-                    <div key={card.id} className="card-glass overflow-hidden">
-                      <img src={card.image} alt={card.name} className="w-full h-48 object-cover" />
-                      <div className="p-4">
-                        <h3 className="font-serif font-bold mb-2">{card.name}</h3>
-                        <Badge variant={card.rarity === "Legendary" ? "default" : "secondary"}>
-                          {card.rarity}
-                        </Badge>
+                {userCards.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Package className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                    <p className="text-muted-foreground mb-2">Your collection is empty</p>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Purchase cards to start your collection!
+                    </p>
+                    <Button onClick={() => window.location.href = "/marketplace"}>
+                      Browse Marketplace
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {userCards.map((card) => (
+                      <div key={card.id} className="card-glass overflow-hidden hover-scale">
+                        <img src={card.image} alt={card.name} className="w-full h-48 object-cover" />
+                        <div className="p-4">
+                          <h3 className="font-serif font-bold mb-2">{card.name}</h3>
+                          <Badge variant={card.rarity === "Legendary" ? "default" : "secondary"}>
+                            {card.rarity}
+                          </Badge>
+                          <p className="text-xs text-muted-foreground mt-2">NFC Enabled ✓</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </TabsContent>
 
@@ -189,7 +216,15 @@ const Profile = () => {
                 <h2 className="text-3xl font-serif font-bold mb-6">Account Settings</h2>
                 <div className="space-y-4">
                   <Button variant="outline">Change Password</Button>
-                  <Button variant="destructive">Logout</Button>
+                  <Button 
+                    variant="destructive"
+                    onClick={() => {
+                      logout();
+                      window.location.href = "/";
+                    }}
+                  >
+                    Logout
+                  </Button>
                 </div>
               </div>
             </TabsContent>

@@ -1,8 +1,18 @@
 import { Moon, ShoppingCart, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
+import AuthModal from "./AuthModal";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const { getCartCount } = useCart();
+  const { user, isAuthenticated } = useAuth();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const cartCount = getCartCount();
+
   return (
     <>
       {/* Top Bar */}
@@ -38,23 +48,53 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="relative">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative"
+              onClick={() => navigate("/checkout")}
+            >
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                  {cartCount}
+                </span>
+              )}
             </Button>
-            <Link to="/profile">
-              <Button variant="ghost" size="icon">
+            {isAuthenticated ? (
+              <Link to="/profile">
+                <Button variant="ghost" size="icon" title={user?.username}>
+                  <User className="w-5 h-5" />
+                </Button>
+              </Link>
+            ) : (
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setIsAuthModalOpen(true)}
+              >
                 <User className="w-5 h-5" />
               </Button>
-            </Link>
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground btn-glow">
-              Login
-            </Button>
+            )}
+            {isAuthenticated ? (
+              <span className="text-sm text-muted-foreground">Hi, {user?.username}</span>
+            ) : (
+              <Button 
+                className="bg-primary hover:bg-primary/90 text-primary-foreground btn-glow"
+                onClick={() => setIsAuthModalOpen(true)}
+              >
+                Login
+              </Button>
+            )}
           </div>
         </div>
       </nav>
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthenticated={() => setIsAuthModalOpen(false)}
+      />
     </>
   );
 };

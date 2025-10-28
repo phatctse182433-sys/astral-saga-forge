@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -17,7 +18,13 @@ interface AuthModalProps {
 const AuthModal = ({ isOpen, onClose, onAuthenticated }: AuthModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [registerUsername, setRegisterUsername] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
   const { toast } = useToast();
+  const { login, register } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +32,7 @@ const AuthModal = ({ isOpen, onClose, onAuthenticated }: AuthModalProps) => {
     
     // Simulate API call
     setTimeout(() => {
+      login(loginEmail, loginPassword);
       setIsLoading(false);
       onAuthenticated();
       toast({
@@ -41,6 +49,7 @@ const AuthModal = ({ isOpen, onClose, onAuthenticated }: AuthModalProps) => {
     
     // Simulate API call
     setTimeout(() => {
+      register(registerUsername, registerEmail, registerPassword);
       setIsLoading(false);
       onAuthenticated();
       toast({
@@ -77,6 +86,8 @@ const AuthModal = ({ isOpen, onClose, onAuthenticated }: AuthModalProps) => {
                     type="email"
                     placeholder="your@email.com"
                     className="pl-10"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -91,6 +102,8 @@ const AuthModal = ({ isOpen, onClose, onAuthenticated }: AuthModalProps) => {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     className="pl-10 pr-10"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
                     required
                   />
                   <button
@@ -156,6 +169,8 @@ const AuthModal = ({ isOpen, onClose, onAuthenticated }: AuthModalProps) => {
                     type="text"
                     placeholder="MysticSeeker"
                     className="pl-10"
+                    value={registerUsername}
+                    onChange={(e) => setRegisterUsername(e.target.value)}
                     required
                   />
                 </div>
@@ -170,6 +185,8 @@ const AuthModal = ({ isOpen, onClose, onAuthenticated }: AuthModalProps) => {
                     type="email"
                     placeholder="your@email.com"
                     className="pl-10"
+                    value={registerEmail}
+                    onChange={(e) => setRegisterEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -184,6 +201,8 @@ const AuthModal = ({ isOpen, onClose, onAuthenticated }: AuthModalProps) => {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     className="pl-10 pr-10"
+                    value={registerPassword}
+                    onChange={(e) => setRegisterPassword(e.target.value)}
                     required
                   />
                   <button

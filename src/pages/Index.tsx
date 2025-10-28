@@ -8,12 +8,13 @@ import { cards } from "@/data/cards";
 import { Card } from "@/types/card";
 import heroBg from "@/assets/hero-bg.jpg";
 import { Sparkles } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { isAuthenticated } = useAuth();
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [filterRarity, setFilterRarity] = useState<string>("All");
 
   const handleCardClick = (card: Card) => {
@@ -26,7 +27,6 @@ const Index = () => {
   };
 
   const handleAuthenticated = () => {
-    setIsAuthenticated(true);
     setIsAuthModalOpen(false);
   };
 
