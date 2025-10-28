@@ -9,11 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import { CreditCard, Package, Minus, Plus } from "lucide-react";
 import { cards, cardPacks } from "@/data/cards";
 import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/contexts/CartContext";
 
 const Purchase = () => {
   const { cardId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedTab, setSelectedTab] = useState("single");
 
@@ -35,6 +37,7 @@ const Purchase = () => {
   const subtotal = selectedTab === "single" ? card.price * quantity : 0;
 
   const handleAddToCart = () => {
+    addToCart(card, quantity);
     toast({
       title: "Added to Cart! 🛒",
       description: `${quantity}x ${card.name} added to your cart`,

@@ -3,27 +3,78 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreditCard, Package } from "lucide-react";
+import { CreditCard, Package, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/contexts/CartContext";
+import { Order } from "@/types/order";
+import { Badge } from "@/components/ui/badge";
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { cart, clearCart, getCartTotal, removeFromCart, updateQuantity } = useCart();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    phone: "",
+  });
+
+  const subtotal = getCartTotal();
+  const shipping = subtotal > 50 ? 0 : 3.99;
+  const tax = 0;
+  const total = subtotal + shipping + tax;
+
+  if (cart.length === 0) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="starfield" />
+        <Navbar />
+        <div className="container mx-auto px-4 py-16 text-center">
+          <h1 className="text-4xl font-serif font-bold mb-4">Your Cart is Empty</h1>
+          <Button onClick={() => navigate("/marketplace")}>Browse Marketplace</Button>
+        </div>
+      </div>
+    );
+  }
 
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
 
+    // Create order
+    const order: Order = {
+      id: `ord_${Date.now()}`,
+      orderNumber: `ORD-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+      date: new Date().toISOString(),
+      items: cart,
+      subtotal,
+      shipping,
+      tax,
+      total,
+      status: "completed",
+      paymentMethod: "PayOS - Card",
+      shippingInfo: formData,
+    };
+
+    // Save to localStorage
+    const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+    orders.unshift(order);
+    localStorage.setItem("orders", JSON.stringify(orders));
+
     // Simulate payment processing
     setTimeout(() => {
       setIsProcessing(false);
+      clearCart();
       toast({
         title: "Payment Successful! 🎉",
         description: "Your cards are on the way!",
       });
-      navigate("/");
+      navigate("/profile?tab=history");
     }, 2000);
   };
 
@@ -38,28 +89,71 @@ const Checkout = () => {
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Order Summary */}
-            <div className="card-glass p-6 h-fit">
-              <h2 className="text-2xl font-serif font-bold mb-4 flex items-center gap-2">
+            <div className="card-glass p-6 h-fit space-y-6">
+              <h2 className="text-2xl font-serif font-bold flex items-center gap-2">
                 <Package className="w-6 h-6" />
                 Order Summary
               </h2>
-              <div className="space-y-4">
+              
+              <div className="space-y-3 max-h-60 overflow-y-auto">
+                {cart.map((item) => (
+                  <div key={item.card.id} className="flex gap-3 border border-border rounded p-3">
+                    <img src={item.card.image} alt={item.card.name} className="w-16 h-20 object-cover rounded" />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-sm">{item.card.name}</h3>
+                      <Badge variant="secondary" className="text-xs">{item.card.rarity}</Badge>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-6 w-6"
+                          onClick={() => updateQuantity(item.card.id, item.quantity - 1)}
+                        >
+                          -
+                        </Button>
+                        <span className="text-sm">{item.quantity}</span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-6 w-6"
+                          onClick={() => updateQuantity(item.card.id, item.quantity + 1)}
+                        >
+                          +
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 ml-auto"
+                          onClick={() => removeFromCart(item.card.id)}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold">${(item.card.price * item.quantity).toFixed(2)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-2 border-t border-border pt-4">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>$42.00</span>
+                  <span>${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>$3.99</span>
+                  <span>{shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax</span>
-                  <span>$0.00</span>
+                  <span>${tax.toFixed(2)}</span>
                 </div>
-                <div className="border-t border-border pt-4">
+                <div className="border-t border-border pt-2">
                   <div className="flex justify-between text-xl font-bold">
                     <span>Total</span>
-                    <span className="text-primary">$45.99</span>
+                    <span className="text-primary">${total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -74,29 +168,60 @@ const Checkout = () => {
               <form onSubmit={handlePayment} className="space-y-4">
                 <div>
                   <Label>Full Name</Label>
-                  <Input placeholder="John Doe" required />
+                  <Input 
+                    placeholder="John Doe" 
+                    required 
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label>Email</Label>
-                  <Input type="email" placeholder="john@example.com" required />
+                  <Input 
+                    type="email" 
+                    placeholder="john@example.com" 
+                    required 
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label>Address</Label>
-                  <Input placeholder="123 Main St" required />
+                  <Input 
+                    placeholder="123 Main St" 
+                    required 
+                    value={formData.address}
+                    onChange={(e) => setFormData({...formData, address: e.target.value})}
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label>City</Label>
-                    <Input placeholder="Denpasar" required />
+                    <Input 
+                      placeholder="Denpasar" 
+                      required 
+                      value={formData.city}
+                      onChange={(e) => setFormData({...formData, city: e.target.value})}
+                    />
                   </div>
                   <div>
                     <Label>Postal Code</Label>
-                    <Input placeholder="80000" required />
+                    <Input 
+                      placeholder="80000" 
+                      required 
+                      value={formData.postalCode}
+                      onChange={(e) => setFormData({...formData, postalCode: e.target.value})}
+                    />
                   </div>
                 </div>
                 <div>
                   <Label>Phone Number</Label>
-                  <Input placeholder="+62 311 89 90 19" required />
+                  <Input 
+                    placeholder="+62 311 89 90 19" 
+                    required 
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  />
                 </div>
                 <Button 
                   type="submit" 
