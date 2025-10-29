@@ -2,7 +2,7 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import CardItem from "@/components/CardItem";
 import StoryModal from "@/components/StoryModal";
-import AuthModal from "@/components/AuthModal";
+import LoginModal from "@/components/LoginModal";
 import { Button } from "@/components/ui/button";
 import { cards } from "@/data/cards";
 import { Card } from "@/types/card";
@@ -21,13 +21,8 @@ const Index = () => {
     setSelectedCard(card);
     setIsStoryModalOpen(true);
   };
-
   const handleLoginRequired = () => {
     setIsAuthModalOpen(true);
-  };
-
-  const handleAuthenticated = () => {
-    setIsAuthModalOpen(false);
   };
 
   const filteredCards = filterRarity === "All" 
@@ -102,13 +97,9 @@ const Index = () => {
         isOpen={isStoryModalOpen}
         onClose={() => setIsStoryModalOpen(false)}
         onLoginRequired={handleLoginRequired}
-        isAuthenticated={isAuthenticated}
-      />
-
-      <AuthModal
+        isAuthenticated={isAuthenticated}      />      <LoginModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        onAuthenticated={handleAuthenticated}
       />
     </div>
   );

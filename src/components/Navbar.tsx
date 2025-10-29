@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
-import AuthModal from "./AuthModal";
+import LoginModal from "@/components/LoginModal";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -43,6 +43,7 @@ const Navbar = () => {
             <Link to="/" className="text-foreground hover:text-primary transition-colors">Home</Link>
             <Link to="/about" className="text-foreground hover:text-primary transition-colors">About</Link>
             <Link to="/marketplace" className="text-foreground hover:text-primary transition-colors">Cards</Link>
+            <Link to="/collection" className="text-foreground hover:text-primary transition-colors">Collection</Link>
             <Link to="/auctions" className="text-foreground hover:text-primary transition-colors">Auctions</Link>
             <Link to="/contact" className="text-foreground hover:text-primary transition-colors">Contact</Link>
           </div>
@@ -88,12 +89,9 @@ const Navbar = () => {
             )}
           </div>
         </div>
-      </nav>
-
-      <AuthModal
+      </nav>      <LoginModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        onAuthenticated={() => setIsAuthModalOpen(false)}
       />
     </>
   );

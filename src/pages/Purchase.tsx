@@ -14,8 +14,7 @@ import { useCart } from "@/contexts/CartContext";
 const Purchase = () => {
   const { cardId } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { toast } = useToast();  const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedTab, setSelectedTab] = useState("single");
 
@@ -42,9 +41,13 @@ const Purchase = () => {
       title: "Added to Cart! 🛒",
       description: `${quantity}x ${card.name} added to your cart`,
     });
-  };
-
-  const handleBuyNow = () => {
+  };  const handleBuyNow = () => {
+    // Add to cart and redirect to checkout
+    addToCart(card, quantity);
+    toast({
+      title: "Added to Cart! 🛒",
+      description: `${quantity}x ${card.name} added to cart. Redirecting to checkout...`,
+    });
     navigate("/checkout");
   };
 

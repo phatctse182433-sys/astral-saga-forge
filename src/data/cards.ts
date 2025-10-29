@@ -1,4 +1,4 @@
-import { Card, CardPack } from "@/types/card";
+import { Card, CardPack, StorySeries } from "@/types/card";
 import odinImg from "@/assets/cards/odin.jpg";
 import thorImg from "@/assets/cards/thor.jpg";
 import freyaImg from "@/assets/cards/freya.jpg";
@@ -6,8 +6,7 @@ import valkyrieImg from "@/assets/cards/valkyrie.jpg";
 import lokiImg from "@/assets/cards/loki.jpg";
 import yggdrasilImg from "@/assets/cards/yggdrasil.jpg";
 
-export const cards: Card[] = [
-  {
+export const cards: Card[] = [  {
     id: "odin-wisdom",
     name: "Odin's Wisdom",
     mythology: "The All-Father of Asgard",
@@ -16,6 +15,8 @@ export const cards: Card[] = [
     price: 49.99,
     nfcEnabled: true,
     stock: 5,
+    seriesId: "ragnarok-saga",
+    seriesOrder: 1,
     story: {
       preview: "In the halls of Asgard, Odin gazed upon the nine realms from his high seat Hlidskjalf. The All-Father, with his single piercing eye, saw all that transpired across the cosmos. His two ravens, Huginn and Muninn, perched upon his shoulders, whispering secrets of thought and memory into his ears.\n\nOdin had sacrificed much for wisdom. He hung himself from Yggdrasil for nine days and nights, pierced by his own spear, to gain knowledge of the runes. He traded his eye at Mimir's well to drink from the waters of cosmic understanding. Such was the price of true enlightenment.",
       full: "In the halls of Asgard, Odin gazed upon the nine realms from his high seat Hlidskjalf. The All-Father, with his single piercing eye, saw all that transpired across the cosmos. His two ravens, Huginn and Muninn, perched upon his shoulders, whispering secrets of thought and memory into his ears.\n\nOdin had sacrificed much for wisdom. He hung himself from Yggdrasil for nine days and nights, pierced by his own spear, to gain knowledge of the runes. He traded his eye at Mimir's well to drink from the waters of cosmic understanding. Such was the price of true enlightenment.\n\nBut with great wisdom came great sorrow. Odin knew of Ragnarök, the twilight of the gods, and the fate that awaited him and all of Asgard. He saw the threads of destiny woven by the Norns, unchangeable and absolute. Yet still he prepared, gathering the greatest warriors to Valhalla, forging alliances, and seeking any path that might alter what seemed inevitable.\n\nWhen you hold this card, you channel Odin's relentless pursuit of knowledge. It reminds you that wisdom requires sacrifice, that true understanding comes at a cost. The All-Father teaches us that even when we see dark futures ahead, we must continue to strive, to learn, and to fight for what matters.\n\nThis NFC-enabled card contains the full saga of Odin's trials, his victories, and his ultimate fate at Ragnarök. Tap it with your device to unlock hidden runes and discover which aspect of Odin's wisdom speaks to your current journey."

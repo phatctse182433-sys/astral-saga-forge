@@ -13,6 +13,8 @@ export interface Card {
   };
   nfcEnabled: boolean;
   stock?: number;
+  seriesId?: string; // ID của series câu chuyện
+  seriesOrder?: number; // Thứ tự trong series
 }
 
 export interface CartItem {
@@ -37,4 +39,25 @@ export interface CardPack {
   };
   badge?: string;
   guaranteedLegendary?: boolean;
+}
+
+export interface StorySeries {
+  id: string;
+  name: string;
+  description: string;
+  mythology: string;
+  totalCards: number;
+  cards: string[]; // Array of card IDs
+  completedStory: string; // Câu chuyện hoàn chỉnh khi collect đủ
+  rewards?: {
+    title: string;
+    description: string;
+    badge?: string;
+  };
+}
+
+export interface UserCollection {
+  collectedCards: string[]; // Array of card IDs user đã sưu tầm
+  completedSeries: string[]; // Array of series IDs đã hoàn thành
+  purchasedCards: string[]; // Array of card IDs user đã mua
 }

@@ -2,30 +2,25 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import CardItem from "@/components/CardItem";
 import StoryModal from "@/components/StoryModal";
-import AuthModal from "@/components/AuthModal";
+import LoginModal from "@/components/LoginModal";
 import { Button } from "@/components/ui/button";
 import { cards } from "@/data/cards";
 import { Card } from "@/types/card";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Marketplace = () => {
+  const { isAuthenticated } = useAuth();
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [filterRarity, setFilterRarity] = useState<string>("All");
 
   const handleCardClick = (card: Card) => {
     setSelectedCard(card);
     setIsStoryModalOpen(true);
   };
-
   const handleLoginRequired = () => {
     setIsAuthModalOpen(true);
-  };
-
-  const handleAuthenticated = () => {
-    setIsAuthenticated(true);
-    setIsAuthModalOpen(false);
   };
 
   const filteredCards = filterRarity === "All" 
@@ -79,12 +74,9 @@ const Marketplace = () => {
         onClose={() => setIsStoryModalOpen(false)}
         onLoginRequired={handleLoginRequired}
         isAuthenticated={isAuthenticated}
-      />
-
-      <AuthModal
+      />      <LoginModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        onAuthenticated={handleAuthenticated}
       />
     </div>
   );

@@ -1,41 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { User, Package, History, Settings, FileDown } from "lucide-react";
+import { User, Package, History, Settings, BookOpen } from "lucide-react";
 import { cards } from "@/data/cards";
-import { Order } from "@/types/order";
 import { useAuth } from "@/contexts/AuthContext";
-import { Card } from "@/types/card";
+import { useCollection } from "@/contexts/CollectionContext";
+import { usePurchaseHistory } from "@/contexts/PurchaseHistoryContext";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const [searchParams] = useSearchParams();
-  const defaultTab = searchParams.get("tab") || "profile";
-  const { user, logout } = useAuth();
+  const defaultTab = searchParams.get("tab") || "profile";  const { user, logout } = useAuth();
+  const { collection } = useCollection();
+  const { orders } = usePurchaseHistory();
   const [username, setUsername] = useState(user?.username || "MysticSeeker");
   const [email, setEmail] = useState(user?.email || "user@example.com");
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [userCards, setUserCards] = useState<Card[]>([]);
-
-  useEffect(() => {
-    const savedOrders = JSON.parse(localStorage.getItem("orders") || "[]");
-    setOrders(savedOrders);
-
-    // Get unique cards from all orders
-    const purchasedCards: Card[] = [];
-    savedOrders.forEach((order: Order) => {
-      order.items.forEach((item) => {
-        // Check if card already exists
-        if (!purchasedCards.find(c => c.id === item.card.id)) {
-          purchasedCards.push(item.card);
-        }
-      });
-    });
-    setUserCards(purchasedCards);
-  }, []);
+  
+  // Get user cards from collection context instead of localStorage
+  const userCards = cards.filter(card => collection.purchasedCards.includes(card.id));
 
   return (
     <div className="min-h-screen bg-background">
@@ -72,8 +58,15 @@ const Profile = () => {
                   </div>
                   <div className="flex-1">
                     <h2 className="text-3xl font-serif font-bold mb-2">{username}</h2>
-                    <p className="text-muted-foreground">Member since January 2025</p>
-                    <Badge className="mt-2">Total Cards: {userCards.length}</Badge>
+                    <p className="text-muted-foreground">Member since January 2025</p>                    <Badge className="mt-2">Total Cards: {userCards.length}</Badge>
+                    <div className="mt-4 flex gap-3">
+                      <Badge variant="outline">
+                        📚 {collection.collectedCards.length} Cards Collected
+                      </Badge>
+                      <Badge variant="outline">
+                        ✅ {collection.completedSeries.length} Stories Completed
+                      </Badge>
+                    </div>
                   </div>
                 </div>
 
@@ -89,11 +82,17 @@ const Profile = () => {
                   <Button className="bg-primary hover:bg-primary/90">Save Changes</Button>
                 </div>
               </div>
-            </TabsContent>
-
-            <TabsContent value="inventory" className="space-y-8">
+            </TabsContent>            <TabsContent value="inventory" className="space-y-8">
               <div className="card-glass p-8">
-                <h2 className="text-3xl font-serif font-bold mb-6">My Card Collection</h2>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-3xl font-serif font-bold">My Card Collection</h2>
+                  <Link to="/collection">
+                    <Button className="bg-primary hover:bg-primary/90">
+                      <BookOpen className="w-4 h-4 mr-2" />
+                      View Collection & Stories
+                    </Button>
+                  </Link>
+                </div>
                 {userCards.length === 0 ? (
                   <div className="text-center py-12">
                     <Package className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
@@ -122,15 +121,16 @@ const Profile = () => {
                   </div>
                 )}
               </div>
-            </TabsContent>
-
-            <TabsContent value="history" className="space-y-8">
+            </TabsContent>            <TabsContent value="history" className="space-y-8">
               <div className="card-glass p-8">
                 <h2 className="text-3xl font-serif font-bold mb-6">Purchase History</h2>
                 {orders.length === 0 ? (
                   <div className="text-center py-12">
                     <Package className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
                     <p className="text-muted-foreground">No purchase history yet</p>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Start your journey by purchasing some cards!
+                    </p>
                     <Button className="mt-4" onClick={() => window.location.href = "/marketplace"}>
                       Browse Marketplace
                     </Button>
@@ -138,66 +138,70 @@ const Profile = () => {
                 ) : (
                   <div className="space-y-6">
                     {orders.map((order) => (
-                      <div key={order.id} className="border border-border rounded-lg p-6">
-                        <div className="flex justify-between items-start mb-4">
+                      <div key={order.id} className="card-glass p-6 space-y-4">
+                        <div className="flex items-center justify-between">
                           <div>
-                            <h3 className="font-semibold text-lg">Order #{order.orderNumber}</h3>
+                            <h3 className="text-lg font-semibold">Order #{order.id}</h3>
                             <p className="text-sm text-muted-foreground">
-                              {new Date(order.date).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
+                              {new Date(order.date).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
                               })}
                             </p>
                           </div>
-                          <Badge variant={order.status === "completed" ? "default" : "secondary"}>
+                          <Badge variant={order.status === 'completed' ? 'default' : 'secondary'}>
                             {order.status}
                           </Badge>
                         </div>
-
-                        <div className="space-y-3 mb-4">
-                          <p className="font-semibold">Items:</p>
-                          {order.items.map((item) => (
-                            <div key={item.card.id} className="flex items-center gap-3">
-                              <img 
-                                src={item.card.image} 
-                                alt={item.card.name} 
-                                className="w-12 h-16 object-cover rounded"
-                              />
-                              <div className="flex-1">
-                                <p className="font-medium text-sm">{item.card.name}</p>
-                                <Badge variant="outline" className="text-xs">{item.card.rarity}</Badge>
+                        
+                        <div>
+                          <h4 className="font-medium mb-3">Items:</h4>
+                          <div className="space-y-2">
+                            {order.items.map((item, index) => (
+                              <div key={index} className="flex items-center gap-4 p-3 bg-background/50 rounded-lg">
+                                <img 
+                                  src={item.cardImage} 
+                                  alt={item.cardName}
+                                  className="w-12 h-12 object-cover rounded"
+                                />
+                                <div className="flex-1">
+                                  <p className="font-medium">{item.cardName}</p>
+                                  <Badge variant="outline" className="text-xs">{item.rarity}</Badge>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-sm">× {item.quantity}</p>
+                                  <p className="font-medium">${item.price.toFixed(2)}</p>
+                                </div>
                               </div>
-                              <p className="text-sm">× {item.quantity}</p>
-                              <p className="font-semibold">${(item.card.price * item.quantity).toFixed(2)}</p>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
 
-                        <div className="border-t border-border pt-4 space-y-2">
-                          <div className="flex justify-between text-sm">
+                        <div className="border-t pt-4">
+                          <div className="flex justify-between text-sm text-muted-foreground">
                             <span>Subtotal:</span>
                             <span>${order.subtotal.toFixed(2)}</span>
                           </div>
-                          <div className="flex justify-between text-sm">
+                          <div className="flex justify-between text-sm text-muted-foreground">
                             <span>Shipping:</span>
-                            <span>{order.shipping === 0 ? "FREE" : `$${order.shipping.toFixed(2)}`}</span>
+                            <span>${order.shipping.toFixed(2)}</span>
                           </div>
-                          <div className="flex justify-between text-sm">
+                          <div className="flex justify-between text-sm text-muted-foreground">
                             <span>Tax:</span>
                             <span>${order.tax.toFixed(2)}</span>
                           </div>
-                          <div className="flex justify-between font-bold text-lg border-t border-border pt-2">
+                          <div className="flex justify-between font-semibold text-lg border-t pt-2 mt-2">
                             <span>Total:</span>
                             <span className="text-primary">${order.total.toFixed(2)}</span>
                           </div>
                         </div>
 
-                        <div className="mt-4 flex gap-2">
+                        <div className="flex gap-2">
                           <Button variant="outline" size="sm">
-                            <FileDown className="w-4 h-4 mr-2" />
+                            <Package className="w-4 h-4 mr-2" />
                             Download Invoice
                           </Button>
                           <Button variant="outline" size="sm">

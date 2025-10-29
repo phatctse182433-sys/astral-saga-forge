@@ -7,13 +7,16 @@ import { CreditCard, Package, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
+import { useCollection } from "@/contexts/CollectionContext";
+import { usePurchaseHistory } from "@/contexts/PurchaseHistoryContext";
 import { Order } from "@/types/order";
 import { Badge } from "@/components/ui/badge";
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { cart, clearCart, getCartTotal, removeFromCart, updateQuantity } = useCart();
+  const { toast } = useToast();  const { cart, clearCart, getCartTotal, removeFromCart, updateQuantity } = useCart();
+  const { addCardToCollection } = useCollection();
+  const { addOrder } = usePurchaseHistory();
   const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -41,38 +44,45 @@ const Checkout = () => {
       </div>
     );
   }
-
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
 
-    // Create order
-    const order: Order = {
-      id: `ord_${Date.now()}`,
-      orderNumber: `ORD-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+    // Create purchase order for history
+    const purchaseOrder = {
+      id: `ORD-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
       date: new Date().toISOString(),
-      items: cart,
+      items: cart.map(item => ({
+        cardId: item.card.id,
+        cardName: item.card.name,
+        cardImage: item.card.image,
+        quantity: item.quantity,
+        price: item.card.price,
+        rarity: item.card.rarity
+      })),
       subtotal,
       shipping,
       tax,
       total,
-      status: "completed",
-      paymentMethod: "PayOS - Card",
-      shippingInfo: formData,
-    };
-
-    // Save to localStorage
-    const orders = JSON.parse(localStorage.getItem("orders") || "[]");
-    orders.unshift(order);
-    localStorage.setItem("orders", JSON.stringify(orders));
-
-    // Simulate payment processing
+      status: "completed" as const,
+      paymentMethod: "PayOS - Card"
+    };    // Simulate payment processing
     setTimeout(() => {
+      // Add order to purchase history
+      addOrder(purchaseOrder);
+      
+      // Auto-add cards to collection when payment successful
+      cart.forEach(item => {
+        for (let i = 0; i < item.quantity; i++) {
+          addCardToCollection(item.card.id);
+        }
+      });
+      
       setIsProcessing(false);
       clearCart();
       toast({
         title: "Payment Successful! 🎉",
-        description: "Your cards are on the way!",
+        description: "Your cards are on the way and have been added to your collection!",
       });
       navigate("/profile?tab=history");
     }, 2000);
