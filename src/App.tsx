@@ -7,35 +7,40 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { CollectionProvider } from "@/contexts/CollectionContext";
 import { PurchaseHistoryProvider } from "@/contexts/PurchaseHistoryContext";
+import { CommunityProvider } from "@/contexts/CommunityContext";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Marketplace from "./pages/Marketplace";
 import Auctions from "./pages/Auctions";
 import Contact from "./pages/Contact";
+import Community from "./pages/Community";
 import Profile from "./pages/Profile";
 import Purchase from "./pages/Purchase";
 import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 import Collection from "./pages/Collection";
+import CreatePost from "./pages/CreatePost";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => (  <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <CartProvider>
         <CollectionProvider>
           <PurchaseHistoryProvider>
-            <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter><Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/marketplace" element={<Marketplace />} />
-            <Route path="/auctions" element={<Auctions />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/collection" element={<Collection />} />
+            <CommunityProvider>
+              <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+              <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/marketplace" element={<Marketplace />} />
+              <Route path="/auctions" element={<Auctions />} />
+              <Route path="/contact" element={<Contact />} />              <Route path="/community" element={<Community />} />
+              <Route path="/create-post" element={<CreatePost />} />
+              <Route path="/collection" element={<Collection />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/purchase/:cardId" element={<Purchase />} />
             <Route path="/checkout" element={<Checkout />} />
@@ -43,6 +48,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />          </Routes>
         </BrowserRouter>
         </TooltipProvider>
+            </CommunityProvider>
           </PurchaseHistoryProvider>
         </CollectionProvider>
       </CartProvider>

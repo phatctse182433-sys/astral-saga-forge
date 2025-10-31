@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import BidModal from "@/components/BidModal";
+import AuctionAnalyticsModal from "@/components/AuctionAnalyticsModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -12,18 +13,16 @@ const Auctions = () => {
   const { toast } = useToast();
   const [selectedFilter, setSelectedFilter] = useState("Active");
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
+  const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
   const [selectedAuction, setSelectedAuction] = useState<any>(null);
-
   const handlePlaceBid = (auction: any) => {
     setSelectedAuction(auction);
     setIsBidModalOpen(true);
   };
 
-  const handleWatchAuction = (cardName: string) => {
-    toast({
-      title: "Watching Auction 👁️",
-      description: `You'll receive notifications for ${cardName}`,
-    });
+  const handleWatchAuction = (auction: any) => {
+    setSelectedAuction(auction);
+    setIsAnalyticsModalOpen(true);
   };
 
   // Mock auction data
@@ -114,11 +113,10 @@ const Auctions = () => {
                   >
                     <Gavel className="w-4 h-4 mr-2" />
                     Place Bid
-                  </Button>
-                  <Button 
+                  </Button>                  <Button 
                     variant="outline" 
                     className="w-full"
-                    onClick={() => handleWatchAuction(auction.name)}
+                    onClick={() => handleWatchAuction(auction)}
                   >
                     <TrendingUp className="w-4 h-4 mr-2" />
                     Watch Auction
@@ -128,9 +126,7 @@ const Auctions = () => {
             </div>
           ))}
         </div>
-      </section>
-
-      {selectedAuction && (
+      </section>      {selectedAuction && (
         <BidModal
           isOpen={isBidModalOpen}
           onClose={() => setIsBidModalOpen(false)}
@@ -138,6 +134,17 @@ const Auctions = () => {
           cardImage={selectedAuction.image}
           currentBid={selectedAuction.currentBid}
           minIncrement={selectedAuction.minIncrement}
+        />
+      )}
+
+      {selectedAuction && (
+        <AuctionAnalyticsModal
+          isOpen={isAnalyticsModalOpen}
+          onClose={() => setIsAnalyticsModalOpen(false)}
+          cardName={selectedAuction.name}
+          cardImage={selectedAuction.image}
+          currentBid={selectedAuction.currentBid}
+          startingBid={selectedAuction.startingBid}
         />
       )}
     </div>

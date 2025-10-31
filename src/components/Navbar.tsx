@@ -36,14 +36,14 @@ const Navbar = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <Moon className="w-8 h-8 text-primary" />
-            <span className="text-2xl font-serif font-bold text-gradient-gold">Pandoora</span>
+            <span className="text-2xl font-serif font-bold text-gradient-gold">PixelMage</span>
           </Link>
 
           <div className="flex items-center gap-8">
             <Link to="/" className="text-foreground hover:text-primary transition-colors">Home</Link>
             <Link to="/about" className="text-foreground hover:text-primary transition-colors">About</Link>
-            <Link to="/marketplace" className="text-foreground hover:text-primary transition-colors">Cards</Link>
-            <Link to="/collection" className="text-foreground hover:text-primary transition-colors">Collection</Link>
+            <Link to="/marketplace" className="text-foreground hover:text-primary transition-colors">Cards</Link>            <Link to="/collection" className="text-foreground hover:text-primary transition-colors">Collection</Link>
+            <Link to="/community" className="text-foreground hover:text-primary transition-colors">Community</Link>
             <Link to="/auctions" className="text-foreground hover:text-primary transition-colors">Auctions</Link>
             <Link to="/contact" className="text-foreground hover:text-primary transition-colors">Contact</Link>
           </div>

@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { User, Package, History, Settings, BookOpen } from "lucide-react";
+import { User, Package, History, Settings, BookOpen, MessageCircle, Heart, Plus } from "lucide-react";
 import { cards } from "@/data/cards";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCollection } from "@/contexts/CollectionContext";
 import { usePurchaseHistory } from "@/contexts/PurchaseHistoryContext";
+import { useCommunity } from "@/contexts/CommunityContext";
 import { Link } from "react-router-dom";
 
 const Profile = () => {
@@ -17,11 +18,15 @@ const Profile = () => {
   const defaultTab = searchParams.get("tab") || "profile";  const { user, logout } = useAuth();
   const { collection } = useCollection();
   const { orders } = usePurchaseHistory();
+  const { posts, getUserPosts } = useCommunity();
   const [username, setUsername] = useState(user?.username || "MysticSeeker");
   const [email, setEmail] = useState(user?.email || "user@example.com");
   
   // Get user cards from collection context instead of localStorage
   const userCards = cards.filter(card => collection.purchasedCards.includes(card.id));
+  
+  // Get user's posts
+  const userPosts = getUserPosts(user?.username || "MysticSeeker");
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,9 +34,8 @@ const Profile = () => {
       <Navbar />
       
       <section className="container mx-auto px-4 py-16">
-        <div className="max-w-6xl mx-auto">
-          <Tabs defaultValue={defaultTab} className="space-y-8">
-            <TabsList className="grid w-full grid-cols-4">
+        <div className="max-w-6xl mx-auto">          <Tabs defaultValue={defaultTab} className="space-y-8">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="profile">
                 <User className="w-4 h-4 mr-2" />
                 Profile
@@ -39,6 +43,10 @@ const Profile = () => {
               <TabsTrigger value="inventory">
                 <Package className="w-4 h-4 mr-2" />
                 Inventory
+              </TabsTrigger>
+              <TabsTrigger value="posts">
+                <MessageCircle className="w-4 h-4 mr-2" />
+                My Posts
               </TabsTrigger>
               <TabsTrigger value="history">
                 <History className="w-4 h-4 mr-2" />
@@ -119,9 +127,90 @@ const Profile = () => {
                       </div>
                     ))}
                   </div>
+                )}              </div>
+            </TabsContent>
+
+            <TabsContent value="posts" className="space-y-8">
+              <div className="card-glass p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-3xl font-serif font-bold">My Stories</h2>
+                  <Link to="/create-post">
+                    <Button className="bg-primary hover:bg-primary/90">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Share New Story
+                    </Button>
+                  </Link>
+                </div>
+                
+                {userPosts.length === 0 ? (
+                  <div className="text-center py-12">
+                    <MessageCircle className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                    <p className="text-muted-foreground mb-2">You haven't shared any stories yet</p>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Share your card collection experiences with the community!
+                    </p>
+                    <Link to="/create-post">
+                      <Button className="bg-primary hover:bg-primary/90">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Share Your First Story
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {userPosts.map((post) => (
+                      <div key={post.id} className="card-glass p-6 space-y-4">
+                        <div className="flex items-start gap-4">
+                          <img 
+                            src={post.cardImage} 
+                            alt={post.cardName}
+                            className="w-20 h-28 object-cover rounded-lg border-2 border-primary/20"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="text-xl font-semibold">{post.title}</h3>
+                              <div className="text-sm text-muted-foreground">
+                                {new Date(post.createdAt).toLocaleDateString()}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 mb-3">
+                              <Badge variant="outline">{post.cardName}</Badge>
+                              {post.tags.map((tag) => (
+                                <Badge key={tag} variant="secondary" className="text-xs">
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                            <p className="text-muted-foreground mb-4 line-clamp-2">
+                              {post.content}
+                            </p>
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              <div className="flex items-center gap-1">
+                                <Heart className="w-4 h-4" />
+                                {post.likes} likes
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <MessageCircle className="w-4 h-4" />
+                                {post.comments.length} comments
+                              </div>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => window.location.href = "/community"}
+                              >
+                                View in Community
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
-            </TabsContent>            <TabsContent value="history" className="space-y-8">
+            </TabsContent>
+
+            <TabsContent value="history" className="space-y-8">
               <div className="card-glass p-8">
                 <h2 className="text-3xl font-serif font-bold mb-6">Purchase History</h2>
                 {orders.length === 0 ? (
