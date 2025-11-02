@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
-<<<<<<< HEAD
-=======
 import LoginModal from "@/components/LoginModal";
->>>>>>> feature/nfc-demo
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,26 +11,17 @@ import { CreditCard, Package, Minus, Plus } from "lucide-react";
 import { cards, cardPacks } from "@/data/cards";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
-<<<<<<< HEAD
-=======
 import { useAuth } from "@/contexts/AuthContext";
->>>>>>> feature/nfc-demo
 
 const Purchase = () => {
   const { cardId } = useParams();
   const navigate = useNavigate();
-<<<<<<< HEAD
-  const { toast } = useToast();  const { addToCart } = useCart();
-  const [quantity, setQuantity] = useState(1);
-  const [selectedTab, setSelectedTab] = useState("single");
-=======
   const { toast } = useToast();
   const { addToCart } = useCart();
   const { isAuthenticated } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [selectedTab, setSelectedTab] = useState("single");
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
->>>>>>> feature/nfc-demo
 
   const card = cards.find(c => c.id === cardId);
 
@@ -53,8 +41,6 @@ const Purchase = () => {
   const subtotal = selectedTab === "single" ? card.price * quantity : 0;
 
   const handleAddToCart = () => {
-<<<<<<< HEAD
-=======
     if (!isAuthenticated) {
       setIsAuthModalOpen(true);
       toast({
@@ -65,16 +51,11 @@ const Purchase = () => {
       return;
     }
     
->>>>>>> feature/nfc-demo
     addToCart(card, quantity);
     toast({
       title: "Added to Cart! 🛒",
       description: `${quantity}x ${card.name} added to your cart`,
     });
-<<<<<<< HEAD
-  };  const handleBuyNow = () => {
-    // Add to cart and redirect to checkout
-=======
   };
 
   const handleBuyNow = () => {
@@ -88,7 +69,6 @@ const Purchase = () => {
       return;
     }
     
->>>>>>> feature/nfc-demo
     addToCart(card, quantity);
     toast({
       title: "Added to Cart! 🛒",
@@ -102,36 +82,21 @@ const Purchase = () => {
       <div className="starfield" />
       <Navbar />
       
-<<<<<<< HEAD
-      <section className="container mx-auto px-4 py-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12">
-=======
       <section className="container mx-auto px-4 py-8 md:py-16">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
->>>>>>> feature/nfc-demo
             {/* Left Column - Product Display */}
             <div className="space-y-6">
               <div className="card-glass overflow-hidden">
                 <img 
                   src={card.image} 
                   alt={card.name}
-<<<<<<< HEAD
-                  className="w-full h-96 object-cover hover-scale"
-                />
-              </div>
-              
-              <div className="card-glass p-6 space-y-4">
-                <h2 className="text-3xl font-serif font-bold">{card.name}</h2>
-=======
                   className="w-full h-64 md:h-96 object-cover hover-scale"
                 />
               </div>
               
               <div className="card-glass p-4 md:p-6 space-y-4">
                 <h2 className="text-2xl md:text-3xl font-serif font-bold">{card.name}</h2>
->>>>>>> feature/nfc-demo
                 <p className="text-muted-foreground">{card.mythology}</p>
                 
                 <div className="flex items-center gap-4">
@@ -167,11 +132,7 @@ const Purchase = () => {
             </div>
 
             {/* Right Column - Purchase Options */}
-<<<<<<< HEAD
-            <div className="card-glass p-6">
-=======
             <div className="card-glass p-4 md:p-6">
->>>>>>> feature/nfc-demo
               <Tabs value={selectedTab} onValueChange={setSelectedTab}>
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="single">Single Card</TabsTrigger>
@@ -295,14 +256,11 @@ const Purchase = () => {
           </div>
         </div>
       </section>
-<<<<<<< HEAD
-=======
 
       <LoginModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
       />
->>>>>>> feature/nfc-demo
     </div>
   );
 };

@@ -5,24 +5,11 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import LoginModal from "@/components/LoginModal";
-<<<<<<< HEAD
-=======
 import { useIsMobile } from "@/hooks/use-mobile";
->>>>>>> feature/nfc-demo
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { getCartCount } = useCart();
-<<<<<<< HEAD
-  const { user, isAuthenticated } = useAuth();
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const cartCount = getCartCount();
-
-  return (
-    <>
-      {/* Top Bar */}
-      <div className="bg-secondary/20 border-b border-border">
-=======
   const { user, isAuthenticated, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -39,7 +26,6 @@ const Navbar = () => {
     <>
       {/* Top Bar - Hidden on mobile */}
       <div className="hidden lg:block bg-secondary/20 border-b border-border">
->>>>>>> feature/nfc-demo
         <div className="container mx-auto px-4 py-2 flex justify-between items-center text-sm text-muted-foreground">
           <div className="flex gap-6">
             <span>📍 Tukad Balian No.19 Denpasar, Bali</span>
@@ -58,16 +44,6 @@ const Navbar = () => {
       <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-<<<<<<< HEAD
-            <Moon className="w-8 h-8 text-primary" />
-            <span className="text-2xl font-serif font-bold text-gradient-gold">PixelMage</span>
-          </Link>
-
-          <div className="flex items-center gap-8">
-            <Link to="/" className="text-foreground hover:text-primary transition-colors">Home</Link>
-            <Link to="/about" className="text-foreground hover:text-primary transition-colors">About</Link>
-            <Link to="/marketplace" className="text-foreground hover:text-primary transition-colors">Cards</Link>            <Link to="/collection" className="text-foreground hover:text-primary transition-colors">Collection</Link>
-=======
             <Moon className="w-6 h-6 md:w-8 md:h-8 text-primary" />
             <span className="text-xl md:text-2xl font-serif font-bold text-gradient-gold">PixelMage</span>
           </Link>
@@ -79,17 +55,12 @@ const Navbar = () => {
             <Link to="/marketplace" className="text-foreground hover:text-primary transition-colors">Cards</Link>
             <Link to="/nfc-demo" className="text-foreground hover:text-primary transition-colors">NFC Demo</Link>
             <Link to="/collection" className="text-foreground hover:text-primary transition-colors">Collection</Link>
->>>>>>> feature/nfc-demo
             <Link to="/community" className="text-foreground hover:text-primary transition-colors">Community</Link>
             <Link to="/auctions" className="text-foreground hover:text-primary transition-colors">Auctions</Link>
             <Link to="/contact" className="text-foreground hover:text-primary transition-colors">Contact</Link>
           </div>
 
-<<<<<<< HEAD
-          <div className="flex items-center gap-4">
-=======
           <div className="flex items-center gap-2 md:gap-4">
->>>>>>> feature/nfc-demo
             <Button 
               variant="ghost" 
               size="icon" 
@@ -103,36 +74,6 @@ const Navbar = () => {
                 </span>
               )}
             </Button>
-<<<<<<< HEAD
-            {isAuthenticated ? (
-              <Link to="/profile">
-                <Button variant="ghost" size="icon" title={user?.username}>
-                  <User className="w-5 h-5" />
-                </Button>
-              </Link>
-            ) : (
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={() => setIsAuthModalOpen(true)}
-              >
-                <User className="w-5 h-5" />
-              </Button>
-            )}
-            {isAuthenticated ? (
-              <span className="text-sm text-muted-foreground">Hi, {user?.username}</span>
-            ) : (
-              <Button 
-                className="bg-primary hover:bg-primary/90 text-primary-foreground btn-glow"
-                onClick={() => setIsAuthModalOpen(true)}
-              >
-                Login
-              </Button>
-            )}
-          </div>
-        </div>
-      </nav>      <LoginModal
-=======
             
             {!isMobile && (
               <>
@@ -287,7 +228,6 @@ const Navbar = () => {
       </nav>
       
       <LoginModal
->>>>>>> feature/nfc-demo
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
       />

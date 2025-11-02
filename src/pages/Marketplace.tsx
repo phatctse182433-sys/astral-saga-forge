@@ -32,29 +32,14 @@ const Marketplace = () => {
       <div className="starfield" />
       <Navbar />
       
-<<<<<<< HEAD
-      <section className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-serif font-bold mb-4">Card Marketplace</h1>
-=======
       <section className="container mx-auto px-4 py-8 md:py-16">
         <div className="text-center mb-8 md:mb-12">
           <h1 className="text-3xl md:text-5xl font-serif font-bold mb-4">Card Marketplace</h1>
->>>>>>> feature/nfc-demo
           <p className="text-xl text-muted-foreground">
             Discover and collect mythological NFC cards
           </p>
         </div>
 
-<<<<<<< HEAD
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-serif font-bold">Available Cards</h2>
-          
-          <div className="flex gap-2">
-            {['All', 'Common', 'Rare', 'Epic', 'Legendary'].map((rarity) => (
-              <Button
-                key={rarity}
-=======
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
           <h2 className="text-2xl md:text-3xl font-serif font-bold">Available Cards</h2>
           
@@ -63,7 +48,6 @@ const Marketplace = () => {
               <Button
                 key={rarity}
                 size="sm"
->>>>>>> feature/nfc-demo
                 variant={filterRarity === rarity ? "default" : "outline"}
                 onClick={() => setFilterRarity(rarity)}
                 className={filterRarity === rarity ? "bg-primary" : ""}
@@ -80,10 +64,7 @@ const Marketplace = () => {
               key={card.id}
               card={card}
               onClick={() => handleCardClick(card)}
-<<<<<<< HEAD
-=======
               onLoginRequired={handleLoginRequired}
->>>>>>> feature/nfc-demo
             />
           ))}
         </div>
