@@ -1,9 +1,22 @@
 import { Card } from "@/types/card";
 import { Badge } from "@/components/ui/badge";
+<<<<<<< HEAD
+=======
+import { Button } from "@/components/ui/button";
+import { ShoppingCart, CreditCard } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+>>>>>>> feature/nfc-demo
 
 interface CardItemProps {
   card: Card;
   onClick: () => void;
+<<<<<<< HEAD
+=======
+  onLoginRequired?: () => void;
+>>>>>>> feature/nfc-demo
 }
 
 const rarityColors = {
@@ -13,7 +26,53 @@ const rarityColors = {
   Legendary: "bg-primary"
 };
 
+<<<<<<< HEAD
 const CardItem = ({ card, onClick }: CardItemProps) => {
+=======
+const CardItem = ({ card, onClick, onLoginRequired }: CardItemProps) => {
+  const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      onLoginRequired?.();
+      toast({
+        title: "Login Required",
+        description: "Please login to add items to your cart",
+        variant: "destructive",
+      });
+      return;
+    }
+    addToCart(card, 1);
+    toast({
+      title: "Added to Cart! 🛒",
+      description: `${card.name} added to your cart`,
+    });
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      onLoginRequired?.();
+      toast({
+        title: "Login Required",
+        description: "Please login to purchase cards",
+        variant: "destructive",
+      });
+      return;
+    }
+    addToCart(card, 1);
+    toast({
+      title: "Added to Cart! 🛒",
+      description: `${card.name} added to cart. Redirecting to checkout...`,
+    });
+    navigate("/checkout");
+  };
+
+>>>>>>> feature/nfc-demo
   return (
     <div
       onClick={onClick}
@@ -35,7 +94,11 @@ const CardItem = ({ card, onClick }: CardItemProps) => {
         </div>
       </div>
       
+<<<<<<< HEAD
       <div className="p-4 space-y-2">
+=======
+      <div className="p-4 space-y-3">
+>>>>>>> feature/nfc-demo
         <h3 className="font-serif text-xl font-semibold text-foreground">
           {card.name}
         </h3>
@@ -46,6 +109,29 @@ const CardItem = ({ card, onClick }: CardItemProps) => {
             <span className="text-xs text-destructive">Only {card.stock} left!</span>
           )}
         </div>
+<<<<<<< HEAD
+=======
+        
+        <div className="flex gap-2 pt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={handleAddToCart}
+          >
+            <ShoppingCart className="w-4 h-4 mr-1" />
+            Add to Cart
+          </Button>
+          <Button
+            size="sm"
+            className="flex-1"
+            onClick={handleBuyNow}
+          >
+            <CreditCard className="w-4 h-4 mr-1" />
+            Buy Now
+          </Button>
+        </div>
+>>>>>>> feature/nfc-demo
       </div>
     </div>
   );

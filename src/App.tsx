@@ -20,6 +20,7 @@ import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 import Collection from "./pages/Collection";
 import CreatePost from "./pages/CreatePost";
+import NFCDemo from "./pages/NFCDemo";
 
 const queryClient = new QueryClient();
 
@@ -37,13 +38,15 @@ const App = () => (  <QueryClientProvider client={queryClient}>
               <Route path="/" element={<Index />} />
               <Route path="/about" element={<About />} />
               <Route path="/marketplace" element={<Marketplace />} />
+              <Route path="/nfc-demo" element={<NFCDemo />} />
               <Route path="/auctions" element={<Auctions />} />
-              <Route path="/contact" element={<Contact />} />              <Route path="/community" element={<Community />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/community" element={<Community />} />
               <Route path="/create-post" element={<CreatePost />} />
               <Route path="/collection" element={<Collection />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/purchase/:cardId" element={<Purchase />} />
-            <Route path="/checkout" element={<Checkout />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/purchase/:cardId" element={<Purchase />} />
+              <Route path="/checkout" element={<Checkout />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />          </Routes>
         </BrowserRouter>
