@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import LoginModal from "@/components/LoginModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,13 +11,17 @@ import { CreditCard, Package, Minus, Plus } from "lucide-react";
 import { cards, cardPacks } from "@/data/cards";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Purchase = () => {
   const { cardId } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();  const { addToCart } = useCart();
+  const { toast } = useToast();
+  const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [selectedTab, setSelectedTab] = useState("single");
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const card = cards.find(c => c.id === cardId);
 
@@ -36,13 +41,34 @@ const Purchase = () => {
   const subtotal = selectedTab === "single" ? card.price * quantity : 0;
 
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      setIsAuthModalOpen(true);
+      toast({
+        title: "Login Required",
+        description: "Please login to add items to your cart",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     addToCart(card, quantity);
     toast({
       title: "Added to Cart! 🛒",
       description: `${quantity}x ${card.name} added to your cart`,
     });
-  };  const handleBuyNow = () => {
-    // Add to cart and redirect to checkout
+  };
+
+  const handleBuyNow = () => {
+    if (!isAuthenticated) {
+      setIsAuthModalOpen(true);
+      toast({
+        title: "Login Required",
+        description: "Please login to purchase cards",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     addToCart(card, quantity);
     toast({
       title: "Added to Cart! 🛒",
@@ -56,21 +82,21 @@ const Purchase = () => {
       <div className="starfield" />
       <Navbar />
       
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-4 py-8 md:py-16">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
             {/* Left Column - Product Display */}
             <div className="space-y-6">
               <div className="card-glass overflow-hidden">
                 <img 
                   src={card.image} 
                   alt={card.name}
-                  className="w-full h-96 object-cover hover-scale"
+                  className="w-full h-64 md:h-96 object-cover hover-scale"
                 />
               </div>
               
-              <div className="card-glass p-6 space-y-4">
-                <h2 className="text-3xl font-serif font-bold">{card.name}</h2>
+              <div className="card-glass p-4 md:p-6 space-y-4">
+                <h2 className="text-2xl md:text-3xl font-serif font-bold">{card.name}</h2>
                 <p className="text-muted-foreground">{card.mythology}</p>
                 
                 <div className="flex items-center gap-4">
@@ -106,7 +132,7 @@ const Purchase = () => {
             </div>
 
             {/* Right Column - Purchase Options */}
-            <div className="card-glass p-6">
+            <div className="card-glass p-4 md:p-6">
               <Tabs value={selectedTab} onValueChange={setSelectedTab}>
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="single">Single Card</TabsTrigger>
@@ -230,6 +256,11 @@ const Purchase = () => {
           </div>
         </div>
       </section>
+
+      <LoginModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
     </div>
   );
 };

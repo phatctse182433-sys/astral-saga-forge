@@ -35,7 +35,7 @@ const Index = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[400px] md:min-h-[600px] flex items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 z-0"
           style={{
@@ -48,29 +48,30 @@ const Index = () => {
         </div>
 
         <div className="container mx-auto px-4 relative z-10 text-center">
-          <p className="text-secondary text-lg mb-4 animate-float">Ultimate Guide To Astrology</p>
-          <h1 className="text-6xl md:text-7xl font-serif font-bold mb-6 text-shadow-glow">
-            Your Star Determines<br />Your Life's Journey
+          <p className="text-secondary text-sm md:text-lg mb-4 animate-float">Ultimate Guide To Astrology</p>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-serif font-bold mb-6 text-shadow-glow">
+            Your Star Determines<br className="hidden sm:block" />Your Life's Journey
           </h1>
           <Button 
             size="lg" 
-            className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 btn-glow"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground text-base md:text-lg px-6 md:px-8 py-4 md:py-6 btn-glow"
           >
-            <Sparkles className="w-5 h-5 mr-2" />
+            <Sparkles className="w-4 h-4 md:w-5 md:h-5 mr-2" />
             Explore Cards
           </Button>
         </div>
       </section>
 
       {/* Card Gallery */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-4xl font-serif font-bold">Card Collection</h2>
+      <section className="container mx-auto px-4 py-8 md:py-16">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+          <h2 className="text-2xl md:text-4xl font-serif font-bold">Card Collection</h2>
           
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {['All', 'Common', 'Rare', 'Epic', 'Legendary'].map((rarity) => (
               <Button
                 key={rarity}
+                size="sm"
                 variant={filterRarity === rarity ? "default" : "outline"}
                 onClick={() => setFilterRarity(rarity)}
                 className={filterRarity === rarity ? "bg-primary" : ""}
